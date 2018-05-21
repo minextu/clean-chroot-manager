@@ -140,6 +140,8 @@ check() {
       export TESTING="Enabled"
     fi
   fi
+  
+  MAKEPKG_CONFIG=""
 }
 
 create() {
@@ -238,7 +240,18 @@ build() {
     args+=(-n)
   fi
 
-  if ! PACKAGER=$PACKAGER MAKEFLAGS=-j$THREADS nice -19 /usr/bin/makechrootpkg "${args[@]}"; then
+  local makepkg_args=()
+  if [[ -n "$MAKEPKG_CONFIG" ]]; then
+    if [[ ! -f "$MAKEPKG_CONFIG" ]]; then
+      local mesg="makepkg config $MAKEPKG_CONFIG does not exist."
+      echo -e "${RED}==> ERROR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}"
+      exit 1
+    fi
+    cp "$MAKEPKG_CONFIG" "$CHROOTPATH64"/root/custom_makepkg.conf
+    makepkg_args+=(--config "/custom_makepkg.conf")
+  fi
+  
+  if ! PACKAGER=$PACKAGER MAKEFLAGS=-j$THREADS nice -19 /usr/bin/makechrootpkg "${args[@]}" -- "${makepkg_args[@]}"; then
     exit 1
   fi
 
@@ -468,6 +481,16 @@ distcc_check() {
 }
 
 check
+
+# get switches
+args=("$@")
+for (( a = 0; a < $#; a++ )); do
+  if [[ ${args[$a]} == -c=* ]]; then
+    MAKEPKG_CONFIG=${args[$a]#*=}
+  elif [[ ${args[$a]} == -* ]]; then
+    echo "Invalid Argument" && exit 1
+  fi
+done
 
 case "$1" in
   a)
