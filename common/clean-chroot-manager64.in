@@ -162,6 +162,8 @@ create() {
     pkgs+=('ccache')
   fi
 
+  pkgs=("${pkgs[@]}" "${EXTRA_PACKAGES[@]}")
+
   # not asking to use distcc so proceed with normal schroot
   if ! mkarchroot "$CHROOTPATH64"/root ${pkgs[*]}; then
     exit 1

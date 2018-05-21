@@ -52,3 +52,6 @@ USE_CCACHE=
 
 # Set the directory where ccache stores its data
 CCACHE_DIR="/scratch/ccache"
+
+# A list of extra packages to be installed into the chroot.
+EXTRA_PACKAGES=()
