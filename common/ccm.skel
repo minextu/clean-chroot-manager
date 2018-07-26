@@ -52,3 +52,11 @@ DISTCC_THREADS=
 # volunteer nodes listed in decreasing order of CPU power. Additional supported
 # options are passed through, see the manpage for distcc.
 DISTCC_HOSTS="localhost/9 foo/8 bar/4"
+
+# Custom pacman repo. Will be added to
+# the bottom of pacman.conf within the chroot
+# Use \n for line breaks
+CUSTOM_PACMAN_REPOS=
+
+# An array of gpg keys to add to pacman's trusted keys
+CUSTOM_PACMAN_GPG_KEYS=()

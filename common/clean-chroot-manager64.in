@@ -197,6 +197,17 @@ create() {
   ###
   ###
 
+  # append any custom repo to pacman.conf
+  if [[ -n "$CUSTOM_PACMAN_REPOS" ]]; then
+    echo -e $CUSTOM_PACMAN_REPOS >> "$CHROOTPATH64"/root/etc/pacman.conf
+  fi
+
+  # sign any custom pacman gpg key
+  for key in "${CUSTOM_PACMAN_GPG_KEYS[@]}"; do
+    arch-nspawn "$CHROOTPATH64"/root pacman-key --recv-key $key
+    arch-nspawn "$CHROOTPATH64"/root pacman-key --lsign-key $key
+  done
+
   # enable pacman color output in chroot because I like it
   sed -i -e '/^#Color/ s,#,,' "$CHROOTPATH64"/root/etc/pacman.conf
 }
